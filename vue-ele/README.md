@@ -1,6 +1,6 @@
-# my-project
+# vue-ele
 
-> vue 翻译案例
+> vue 仿饿了吗
 
 ## Build Setup
 
