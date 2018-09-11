@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-		<my-header></my-header>
+		<my-header :seller="seller"></my-header>
 		 <div class="tab border-1px">
 			<div class="tab-item">
 						<router-link to="/goods">商品</router-link>
@@ -18,11 +18,29 @@
 
 <script>
 	import header from "@/components/header/header"
+	import axios from "axios"
 export default {
   name: 'App',
+	data() {
+		return {
+			seller:{}
+		}
+	},
 	components:{
 		MyHeader:header
 	},
+	created() {
+		axios.get('./static/data.json')
+		.then((response) => {
+				let res = response.data;
+				this.seller = res.seller;
+				console.log(this.seller)
+		})
+		
+			.catch(function (error) {
+				console.log(error);
+			});
+	}
 }
 </script>
 
