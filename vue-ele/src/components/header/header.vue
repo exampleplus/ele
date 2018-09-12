@@ -17,16 +17,30 @@
 					<span class="text">{{seller.supports[0].description}}</span>
 				</div>
 			</div>
-			<div v-if="seller.supports" class="support-count">
+			<div v-if="seller.supports" class="support-count" @click="showDetail">
 				<span class="count">{{seller.supports.length}}个</span>
 				<i class="icon-keyboard_arrow_right"></i>
 			</div>
 		</div>
 		<!-- 公告 -->
-		<div class="bulletin-wrapper">
+		<div class="bulletin-wrapper" @click="showDetail">
 			<span class="bulletin-title"></span>
 			<span class="bulletin-text">{{seller.bulletin}}</span>
 			<i class="icon-keyboard_arrow_right"></i>
+		</div>
+		<div class="background">
+			<img :src="seller.avatar" alt="">
+		</div>
+		<!-- 详情弹层 -->
+		<div class="detail" v-show="detailShow">
+			<div class="detail-wrapper clearfix">
+				<div class="detail-main">
+					<p>{{seller.bulletin}}</p>
+				</div>
+				<div class="detail-close" @click="hideDetail">
+						<i class="icon-close"></i>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -42,7 +56,16 @@
 		},
 		data() {
 			return {
+				detailShow:false,
 				classMap:['decrease','discount','guarantee','invoice','special']
+			}
+		},
+		methods:{
+			showDetail() {
+				this.detailShow = true
+			},
+			hideDetail() {
+				this.detailShow = false
 			}
 		}
 	}
@@ -50,10 +73,12 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
 	@import '../../common/stylus/mixin.styl'
+	@import '../../common/stylus/base.styl'
 	.header
 		color:#fff
 		position:relative
-		background: #999
+		overflow:hidden
+		background: rgba(7,17,27,0.5)
 		.content-wrapper
 			position: relative 
 			padding: 24px 12px 18px 24px
@@ -82,15 +107,99 @@
 					line-height:12px
 					font-size:12px
 			.support
-				font-size:10px
-				line-height:12px
 				.icon
-					display:inline-block
+					display: inline-block
+					vertical-align: top
+					width: 12px
+					height: 12px
+					margin-right: 4px
+					background-size: 12px 12px
+					background-repeat: no-repeat
+					&.decrease
+						bg-image('decrease_1')
+					&.discount
+						bg-image('discount_1')
+					&.guarantee
+						bg-image('guarantee_1')
+					&.invoice
+						bg-image('invoice_1')
+					&.special
+						bg-image('special_1')
+				.text
+					line-height: 12px
+					font-size: 10px
 					vertical-align:top
-					width:20px
-					height:20px
-					margin-right:4px
-					bg-image('decrease_1')
-				  background-size: 12px 12px
-		      background-repeat: no-repeat
+			.support-count
+				position: absolute
+				right: 12px
+				bottom: 14px
+				padding: 0 8px
+				height: 24px
+				line-height: 24px
+				border-radius: 14px
+				background: rgba(0, 0, 0, 0.2)
+				text-align: center
+				.count
+					vertical-align: top
+					font-size: 10px
+				.icon-keyboard_arrow_right
+					margin-left: 2px
+					line-height: 24px
+					font-size: 10px
+		.bulletin-wrapper
+			position: relative
+			height: 28px
+			line-height: 28px
+			padding: 0 22px 0 12px
+			white-space:nowrap
+			overflow:hidden
+			text-overflow:ellipsis
+			background: rgba(7, 17, 27, 0.2)
+			.bulletin-title
+				display:inline-block
+				width:22px
+				height:12px
+				vertical-align:top
+				bg-image('bulletin')
+				background-size: 22px 12px
+				background-repeat: no-repeat
+				margin-top:8px
+			.bulletin-text
+				vertical-align: top
+				margin: 0 4px
+				font-size: 10px
+			.icon-keyboard_arrow_right
+				position: absolute
+				font-size: 10px
+				right: 12px
+				top: 8px
+		.background
+			position: absolute
+			top: 0
+			left: 0
+			width: 100%
+			height: 100%
+			z-index: -1
+			filter: blur(10px)
+		.detail
+			position:fixed
+			top:0
+			left:0
+			width:100%
+			height:100%
+			background:rgba(7,17,27,0.5)
+			z-index:100
+			.detail-wrapper
+				width:100%
+				min-height:100%
+				.detail-main
+					margin-top:64px
+					padding-bottom: 64px; /* 必须使用和footer相同的高度 */
+				.detail-close
+					position: relative
+					width: 32px
+					height: 32px
+					margin: -64px auto 0 auto
+					clear: both
+					font-size: 32px
 </style>
