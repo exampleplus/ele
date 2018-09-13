@@ -34,7 +34,7 @@ export default {
 		.then((response) => {
 				let res = response.data;
 				this.seller = res.seller;
-				console.log(this.seller)
+			
 		})
 		
 			.catch(function (error) {
