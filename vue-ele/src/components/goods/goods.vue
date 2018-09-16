@@ -1,8 +1,8 @@
 <template>
 	<div class="goods">
-		<div class="menu-wrapper">
+		<div class="menu-wrapper" ref="menuWrapper">
 			<ul>
-				<li v-for="(item,index) in goods" class="menu-item">
+				<li v-for="(item,index) in goods" @click="selectMenu(index,$event)" class="menu-item" :class="{'current':currentIndex===index}">
 				<span class="text border-1px">
 					<span v-show="item.type>0" class="icon" :class="classMap[item.type]"></span>
 					{{item.name}}
@@ -10,9 +10,9 @@
 				</li>
 			</ul>
 		</div>
-		<div class="foods-wrapper">
+		<div class="foods-wrapper" ref="foodsWrapper">
 			<ul>
-				<li v-for="item in goods" class="food-list">
+				<li v-for="item in goods" class="food-list food-list-hook" ref="foodList">
 					<h1 class="title">{{item.name}}</h1>
 					<ul>
 						<li v-for="food in item.foods" class="food-item border-1px">
@@ -38,21 +38,41 @@
 				</li>
 			</ul>
 		</div>
-	</div>
+		<shopcart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shopcart>
+</div>
 </template>
 
 <script>
+	import BScroll from 'better-scroll'
 	import axios from 'axios'
+	import shopcart from "@/components/shopcart/shopcart"
 	export default {
 		props:{
 			seller:{
 				type:Object
 			}
 		},
+		components:{
+			shopcart
+		},
 		data() {
 			return {
+				listHeight:[],
 				classMap:['decrease','discount','guarantee','invoice','special'],
-				goods:[]
+				goods:[],
+				scrollY:""
+			}
+		},
+		computed: {
+			currentIndex() {
+				for ( let i = 0; i < this.listHeight.length; i++ ) {
+					let height1 = this.listHeight[i];
+					let height2 = this.listHeight[i+1];
+					if(!height2 || this.scrollY >= height1 && this.scrollY < height2) {
+						return i;  //左侧对应的索引
+					}
+				}
+				return 0;
 			}
 		},
 		mounted() {
@@ -61,8 +81,48 @@
 					let res = response.data;
 					let goods = res.goods;
 					this.goods = goods;
-					console.log(this.goods)
+					
+					//初始化滚动事件要写在$nextTick方法里面
+					this.$nextTick(() => {
+						this._initScroll();
+						this._calculateHeight();
+					})
+					
+				});
+				
+				
+		},
+		methods:{
+			//初始化滚动
+			_initScroll() {
+				this.menuScroll = new BScroll(this.$refs.menuWrapper,{
+					click:true
 				})
+				this.foodsScroll = new BScroll(this.$refs.foodsWrapper,{
+					probeType:3 //实时记录滚动的位置
+				})
+				
+				this.foodsScroll.on('scroll',(pos) => {
+					this.scrollY = Math.abs(Math.round(pos.y));
+				})
+			},
+			//计算每个食品分类高度
+			_calculateHeight() {
+				let foodList = this.$refs.foodList; //右侧每个食品分类
+				let height = 0;
+				this.listHeight.push(height);
+				for( let i = 0; i < foodList.length; i++ ) {
+					let item = foodList[i];
+					height = height + item.clientHeight;
+					this.listHeight.push(height); //每个分类食品的高度放到数组里面
+				}
+				
+			},
+			//点击左侧食品
+			selectMenu(index,event) {
+				let foodList = this.$refs.foodList;
+				this.foodsScroll.scrollToElement(foodList[index],300)
+			}
 		}
 	}
 </script>
