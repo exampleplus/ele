@@ -30,6 +30,9 @@
 									<span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
 								</div>
 								<div class="cartcontrol-wrapper">
+									<cartcontrol :food="food"></cartcontrol>
+								</div>
+								<div class="cartcontrol-wrapper">
 								<!-- 	<cartcontrol @add="addFood" :food="food"></cartcontrol> -->
 								</div>
 							</div>
@@ -46,6 +49,8 @@
 	import BScroll from 'better-scroll'
 	import axios from 'axios'
 	import shopcart from "@/components/shopcart/shopcart"
+	import cartcontrol from "@/components/cartcontrol/cartcontrol"
+
 	export default {
 		props:{
 			seller:{
@@ -53,7 +58,8 @@
 			}
 		},
 		components:{
-			shopcart
+			shopcart,
+			cartcontrol
 		},
 		data() {
 			return {
@@ -99,6 +105,7 @@
 					click:true
 				})
 				this.foodsScroll = new BScroll(this.$refs.foodsWrapper,{
+					click:true,
 					probeType:3 //实时记录滚动的位置
 				})
 				
