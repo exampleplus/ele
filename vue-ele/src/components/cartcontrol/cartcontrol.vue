@@ -23,7 +23,7 @@
 			}
 		},
 		mounted:function(){
-			console.log(this.food)
+			
 		},
 		methods:{
 			decreaseCart() {

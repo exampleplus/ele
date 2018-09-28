@@ -32,16 +32,13 @@
 								<div class="cartcontrol-wrapper">
 									<cartcontrol :food="food"></cartcontrol>
 								</div>
-								<div class="cartcontrol-wrapper">
-								<!-- 	<cartcontrol @add="addFood" :food="food"></cartcontrol> -->
-								</div>
 							</div>
 						</li>
 					</ul>
 				</li>
 			</ul>
 		</div>
-		<shopcart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shopcart>
+		<shopcart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice" :selectFoods="selectFoods"></shopcart>
 </div>
 </template>
 
@@ -79,6 +76,17 @@
 					}
 				}
 				return 0;
+			},
+			selectFoods() {
+				let foods = [];
+				this.goods.forEach((good) => {
+				  good.foods.forEach((food) => {
+					if (food.count) {
+					  foods.push(food);
+					}
+				  });
+				});
+				return foods;
 			}
 		},
 		mounted() {
@@ -87,7 +95,7 @@
 					let res = response.data;
 					let goods = res.goods;
 					this.goods = goods;
-					
+					console.log(goods)
 					//初始化滚动事件要写在$nextTick方法里面
 					this.$nextTick(() => {
 						this._initScroll();

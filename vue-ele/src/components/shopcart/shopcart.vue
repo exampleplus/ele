@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="shopcart">
-      <div class="content">
+      <div class="content" @click="toggleList">
         <div class="content-left">
           <div class="logo-wrapper">
             <div class="logo" :class='{"highlight" : totalCount > 0}'>
@@ -18,20 +18,48 @@
           </div>
         </div>
       </div>
+			<transition name="fold">
+				<div class="shopcart-list" v-show="fold">
+						<div class="list-header">
+							<h1 class="title">购物车</h1>
+							<span class="empty" @click="empty">清空</span>
+						</div>
+						<div class="list-content" ref="listContent">
+							<ul>
+								<li class="food" v-for="food in selectFoods">
+									<span class="name">{{food.name}}</span>
+									<div class="price">
+										<span>￥{{food.price*food.count}}</span>
+									</div>
+									<div class="cartcontrol-wrapper">
+										<cartcontrol :food="food"></cartcontrol>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+			</transition>
     </div>
+		 <transition name="fade">
+      <div class="list-mask" v-show="fold"></div>
+    </transition>
   </div>
 </template>
 
 <script>
+	import cartcontrol from "@/components/cartcontrol/cartcontrol"
   export default {
+		components: {
+      cartcontrol
+    },
     props: {
 			selectFoods:{
 				type:Array,
 				default() {
 					return [
 						{
-							price:10,
-							count:4
+							price:0,
+							count:0
 						}
 					]
 				}
@@ -48,7 +76,7 @@
     data() {
       return {
         dropBalls: [],
-        fold: true
+        fold: false
       }
     },
     computed: {
@@ -82,10 +110,41 @@
         } else {
           return '去结算';
         }
-			}
+			},
+// 			listShow() {
+// 				 if (!this.totalCount) {
+//           this.fold = true;
+//           return false;
+//         }
+//         let show = !this.fold;
+//         if (show) {
+//           this.$nextTick(() => {
+//             if (!this.scroll) {
+//               this.scroll = new BScroll(this.$refs.listContent, {
+//                 click: true
+//               });
+//             } else {
+//               this.scroll.refresh();
+//             }
+//           });
+//         }
+//         return show;
+// 			}
     },
     methods: {
-    
+			toggleList() {
+				if (!this.totalCount) {
+          return;
+        }
+        this.fold = !this.fold;
+			},
+			//清空购物车
+			empty() {
+				this.selectFoods.forEach((food) => {
+          food.count = 0;
+        });
+				this.fold = false;
+			}
     },
     components: {
       
