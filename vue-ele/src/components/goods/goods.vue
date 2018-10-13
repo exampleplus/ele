@@ -89,6 +89,16 @@
         });
         return foods;
       }
+				let foods = [];
+				this.goods.forEach((good) => {
+				  good.foods.forEach((food) => {
+					if (food.count) {
+					  foods.push(food);
+					}
+				  });
+				});
+				return foods;
+			}
 		},
 		mounted() {
 			axios.get('/static/data.json')
@@ -96,7 +106,7 @@
 					let res = response.data;
 					let goods = res.goods;
 					this.goods = goods;
-					
+					console.log(goods)
 					//初始化滚动事件要写在$nextTick方法里面
 					this.$nextTick(() => {
 						this._initScroll();
