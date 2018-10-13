@@ -32,16 +32,13 @@
 								<div class="cartcontrol-wrapper">
 									<cartcontrol :food="food"></cartcontrol>
 								</div>
-								<div class="cartcontrol-wrapper">
-								<!-- 	<cartcontrol @add="addFood" :food="food"></cartcontrol> -->
-								</div>
 							</div>
 						</li>
 					</ul>
 				</li>
 			</ul>
 		</div>
-		<shopcart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></shopcart>
+		<shopcart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice" :selectFoods="selectFoods"></shopcart>
 </div>
 </template>
 
@@ -66,7 +63,8 @@
 				listHeight:[],
 				classMap:['decrease','discount','guarantee','invoice','special'],
 				goods:[],
-				scrollY:""
+				scrollY:"",
+				selectedFood:{}
 			}
 		},
 		computed: {
@@ -79,7 +77,18 @@
 					}
 				}
 				return 0;
-			}
+			},
+			selectFoods() {
+        let foods = [];
+        this.goods.forEach((good) => {
+          good.foods.forEach((food) => {
+            if (food.count) {
+              foods.push(food);
+            }
+          });
+        });
+        return foods;
+      }
 		},
 		mounted() {
 			axios.get('/static/data.json')

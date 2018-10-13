@@ -23,7 +23,7 @@
 			}
 		},
 		mounted:function(){
-			console.log(this.food)
+		
 		},
 		methods:{
 			decreaseCart() {
@@ -31,7 +31,7 @@
 					this.food.count--
 				}
 			},
-			addCart() {
+			addCart(event) {
 				if(!this.food.count) {
 					Vue.set(this.food,"count",1) 
 				} else {
